@@ -6,15 +6,31 @@
         <title>My first three.js app</title>
         <style>
             body {
-                margin: 0;
-            }
+				color: #444;
+				background: #eee;
+			}
+			a {
+				color: #08f;
+			}
 
-            canvas {
-                display: block;
-            }
+            .colorPicker {
+				display: inline-block;
+				margin: 0 10px
+			}
         </style>
     </head>
-    <body style="background-color: white;">
+    <body>
         <script type="module" src="js/main.js"></script>
+
+        <div id="info">
+			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> car materials<br/>
+			Ferrari 458 Italia model by <a href="https://sketchfab.com/models/57bf6cc56931426e87494f554df1dab6" target="_blank" rel="noopener">vicent091036</a>
+			<br><br>
+			<span class="colorPicker"><input id="body-color" type="color" value="#ff0000"></input><br/>Body</span>
+			<span class="colorPicker"><input id="details-color" type="color" value="#ffffff"></input><br/>Details</span>
+			<span class="colorPicker"><input id="glass-color" type="color" value="#ffffff"></input><br/>Glass</span>
+		</div>
+
+		<div id="container"></div>
     </body>
 </html>
