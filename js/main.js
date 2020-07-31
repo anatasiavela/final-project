@@ -61,7 +61,11 @@ function init() {
         color: 0xff0000, metalness: 0.6, roughness: 0.4, clearcoat: 0.05, clearcoatRoughness: 0.05
     } );
 
-    var detailsMaterial = new THREE.MeshStandardMaterial( {
+    var rimsMaterial = new THREE.MeshStandardMaterial( {
+        color: 0xffffff, metalness: 1.0, roughness: 0.5
+    } );
+
+    var stitchingMaterial = new THREE.MeshStandardMaterial( {
         color: 0xffffff, metalness: 1.0, roughness: 0.5
     } );
 
@@ -71,23 +75,22 @@ function init() {
 
     var bodyColorInput = document.getElementById( 'body-color' );
     bodyColorInput.addEventListener( 'input', function () {
-
         bodyMaterial.color.set( this.value );
-
     } );
 
-    var detailsColorInput = document.getElementById( 'details-color' );
-    detailsColorInput.addEventListener( 'input', function () {
+    var rimsColorInput = document.getElementById( 'rims-color' );
+    rimsColorInput.addEventListener( 'input', function () {
+        rimsMaterial.color.set( this.value );
+    } );
 
-        detailsMaterial.color.set( this.value );
-
+    var stitchingColorInput = document.getElementById( 'stitching-color' );
+    stitchingColorInput.addEventListener( 'input', function () {
+        stitchingMaterial.color.set( this.value );
     } );
 
     var glassColorInput = document.getElementById( 'glass-color' );
     glassColorInput.addEventListener( 'input', function () {
-
         glassMaterial.color.set( this.value );
-
     } );
 
     // Car
@@ -106,11 +109,12 @@ function init() {
 
         carModel.getObjectByName( 'body' ).material = bodyMaterial;
 
-        carModel.getObjectByName( 'rim_fl' ).material = detailsMaterial;
-        carModel.getObjectByName( 'rim_fr' ).material = detailsMaterial;
-        carModel.getObjectByName( 'rim_rr' ).material = detailsMaterial;
-        carModel.getObjectByName( 'rim_rl' ).material = detailsMaterial;
-        carModel.getObjectByName( 'trim' ).material = detailsMaterial;
+        carModel.getObjectByName( 'rim_fl' ).material = rimsMaterial;
+        carModel.getObjectByName( 'rim_fr' ).material = rimsMaterial;
+        carModel.getObjectByName( 'rim_rr' ).material = rimsMaterial;
+        carModel.getObjectByName( 'rim_rl' ).material = rimsMaterial;
+
+        carModel.getObjectByName( 'trim' ).material = stitchingMaterial;
 
         carModel.getObjectByName( 'glass' ).material = glassMaterial;
 
@@ -133,36 +137,40 @@ function init() {
         carModel.add( mesh );
 
         scene.add( carModel );
-
     } );
+}
 
+window.addEventListener('keypress', function(e){
+    var letter = String.fromCharCode(e.charCode);
+    if (letter == 'a') {
+        console.log(letter);
+        accelerate();
+    }
+})
+
+function accelerate(){
+    var time = - performance.now() / 1000;
+    for ( var i = 0; i < wheels.length; i ++ ) {
+        wheels[ i ].rotation.x = (time**2) * Math.PI;
+    }
+    grid.position.z = - ( time**2 ) % 5;
 }
 
 function onWindowResize() {
-
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
-
 }
 
 function render() {
-
     var time = - performance.now() / 1000;
-
-    for ( var i = 0; i < wheels.length; i ++ ) {
-
+    /* for ( var i = 0; i < wheels.length; i ++ ) {
         wheels[ i ].rotation.x = time * Math.PI;
-
-    }
-
-    grid.position.z = - ( time ) % 5;
-
+    } */
+    //grid.position.z = - ( time ) % 5;
     renderer.render( scene, camera );
-
     stats.update();
-
 }
 
 init();
