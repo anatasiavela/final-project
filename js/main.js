@@ -8,11 +8,19 @@ import { RoomEnvironment } from '../three/examples/jsm/environments/RoomEnvironm
 import { GLTFLoader } from '../three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from '../three/examples/jsm/loaders/DRACOLoader.js';
 
-var camera, scene, renderer;
+import { update as update_motion } from './motion.js';
+
+var camera, fakeCamera, scene, renderer;
 var stats;
 
 var grid, wheels = [];
+var chassis;
+var carWhole;
+var brakeMaterial;
+
 var controls;
+
+var lastRenderTime = 0;
 
 function init() {
 
@@ -32,12 +40,11 @@ function init() {
     stats = new Stats();
     container.appendChild( stats.dom );
 
-    //
-
     camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 100 );
-    camera.position.set( 4.25, 1.4, - 4.5 );
+    camera.position.set( 4.25, 1.9, - 4.5 );
 
-    controls = new OrbitControls( camera, container );
+    fakeCamera = camera.clone();
+    controls = new OrbitControls( fakeCamera, container );
     controls.target.set( 0, 0.5, 0 );
     controls.update();
 
@@ -49,8 +56,8 @@ function init() {
     scene.environment = pmremGenerator.fromScene( environment ).texture;
     scene.fog = new THREE.Fog( 0xeeeeee, 10, 50 );
 
-    grid = new THREE.GridHelper( 100, 40, 0x000000, 0x000000 );
-    grid.material.opacity = 0.1;
+    grid = new THREE.GridHelper( 1000, 400, 0x000000, 0x000000 );
+    grid.material.opacity = 0.2;
     grid.material.depthWrite = false;
     grid.material.transparent = true;
     scene.add( grid );
@@ -67,6 +74,10 @@ function init() {
 
     var stitchingMaterial = new THREE.MeshStandardMaterial( {
         color: 0xffffff, metalness: 1.0, roughness: 0.5
+    } );
+
+    brakeMaterial = new THREE.MeshPhysicalMaterial( {
+        color: 0xff0000, roughness: 0.6, transparent:true
     } );
 
     var glassMaterial = new THREE.MeshPhysicalMaterial( {
@@ -106,8 +117,12 @@ function init() {
     loader.load( '../three/examples/models/gltf/ferrari.glb', function ( gltf ) {
 
         var carModel = gltf.scene.children[ 0 ];
+        carWhole = carModel;
 
-        carModel.getObjectByName( 'body' ).material = bodyMaterial;
+        carModel.getObjectByName('brakes').material = brakeMaterial;
+
+        chassis = carModel.getObjectByName( 'body' );
+        chassis.material = bodyMaterial;
 
         carModel.getObjectByName( 'rim_fl' ).material = rimsMaterial;
         carModel.getObjectByName( 'rim_fr' ).material = rimsMaterial;
@@ -137,23 +152,8 @@ function init() {
         carModel.add( mesh );
 
         scene.add( carModel );
+        carModel.add(camera);
     } );
-}
-
-window.addEventListener('keypress', function(e){
-    var letter = String.fromCharCode(e.charCode);
-    if (letter == 'a') {
-        console.log(letter);
-        accelerate();
-    }
-})
-
-function accelerate(){
-    var time = - performance.now() / 1000;
-    for ( var i = 0; i < wheels.length; i ++ ) {
-        wheels[ i ].rotation.x = (time**2) * Math.PI;
-    }
-    grid.position.z = - ( time**2 ) % 5;
 }
 
 function onWindowResize() {
@@ -164,13 +164,17 @@ function onWindowResize() {
 }
 
 function render() {
-    var time = - performance.now() / 1000;
-    /* for ( var i = 0; i < wheels.length; i ++ ) {
-        wheels[ i ].rotation.x = time * Math.PI;
-    } */
-    //grid.position.z = - ( time ) % 5;
+    var time = performance.now() / 1000;
+
+    camera.copy(fakeCamera);
     renderer.render( scene, camera );
+    update_motion(time, lastRenderTime);
+
     stats.update();
+
+    lastRenderTime = time;
 }
 
 init();
+
+export {wheels, grid, chassis, brakeMaterial, carWhole};

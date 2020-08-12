@@ -4,56 +4,61 @@
     <head>
         <meta charset="utf-8">
         <title>My first three.js app</title>
-        <style>
-            body {
-				color: #444;
-				margin: 0;
-				font-family: Monospace;
-				font-size: 13px;
-				line-height: 24px;
-				overscroll-behavior: none;
-			}
-			a {
-				color: #08f;
-			}
-
-            .colorPicker {
-				display: inline-block;
-				margin: 0 10px
-			}
-
-			a, button, input, select {
-				pointer-events: auto;
-			}
-
-			#info {
-				position: absolute;
-				top: 0px;
-				width: 100%;
-				padding: 10px;
-				box-sizing: border-box;
-				text-align: center;
-				-moz-user-select: none;
-				-webkit-user-select: none;
-				-ms-user-select: none;
-				user-select: none;
-				pointer-events: none;
-				z-index: 2; /* TODO Solve this in HTML */
-			}
-        </style>
+		<link rel="stylesheet" href="./css/main.css">
+		<link rel="stylesheet" href="./css/switch.css">
     </head>
     <body>
-        <script type="module" src="js/main.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+        <script type="module" src="./js/main.js"></script>
+        <script type="module" src="./js/gamepad.js"></script>
+        <script type="module" src="./js/motion.js"></script>
 
         <div id="info">
-			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> car materials<br/>
-			Ferrari 458 Italia model by <a href="https://sketchfab.com/models/57bf6cc56931426e87494f554df1dab6" target="_blank" rel="noopener">vicent091036</a>
-			<br><br>
 			<span class="colorPicker"><input id="body-color" type="color" value="#ff0000"></input><br/>Body</span>
 			<span class="colorPicker"><input id="rims-color" type="color" value="#ffffff"></input><br/>Rim</span>
 			<span class="colorPicker"><input id="stitching-color" type="color" value="#ffffff"></input><br/>Stitching</span>
-			<span class="colorPicker"><input id="glass-color" type="color" value="#ffffff"></input><br/>Glass</span>
+            <span class="colorPicker"><input id="glass-color" type="color" value="#ffffff"></input><br/>Glass</span>
 		</div>
+
+		<div id="force-switches">
+			<div class="sliderWrapper">
+				<div>Traction force</div>
+				<label class="switch">
+					<input type="checkbox" id="traction-switch" checked>
+					<span class="slider round"></span>
+				</label>
+			</div>
+			<br>
+			<div class="sliderWrapper">
+				<div>Air Resistance (Drag) force</div>
+				<label class="switch">
+					<input type="checkbox" id="drag-switch" checked>
+					<span class="slider round"></span>
+				</label>
+			</div>
+			<br>
+			<div class="sliderWrapper">
+				<div>Rolling Resistance force</div>
+				<label class="switch">
+					<input type="checkbox" id="rr-switch" checked>
+					<span class="slider round"></span>
+				</label>
+			</div>
+		</div>
+
+        <div id = "stats">
+            <span>acceleration: </span><span id="a"></span><span> m/s^2 </span>
+            <br>
+            <span>speed: </span><span id="v"></span><span> mph </span>
+            <br>
+            <span>gear: </span><span id="curr-gear"></span>
+            <br>
+            <span>rpm: </span><span id="curr-rpm"></span>
+            <br>
+            <span>start time: </span><span id="time"></span>
+            <br>
+            <span>transmission: </span><span id="transmission"></span>
+        </div>
 
 		<div id="container"></div>
     </body>
