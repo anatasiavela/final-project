@@ -1,12 +1,12 @@
-import * as THREE from '/js/three/build/three.module.js';
+import * as THREE from '../three/build/three.module.js';
 
-import Stats from '/js/three/examples/jsm/libs/stats.module.js';
+import Stats from '../three/examples/jsm/libs/stats.module.js';
 
-import { OrbitControls } from '/js/three/examples/jsm/controls/OrbitControls.js';
-import { RoomEnvironment } from '/js/three/examples/jsm/environments/RoomEnvironment.js';
+import { OrbitControls } from '../three/examples/jsm/controls/OrbitControls.js';
+import { RoomEnvironment } from '../three/examples/jsm/environments/RoomEnvironment.js';
 
-import { GLTFLoader } from '/js/three/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from '/js/three/examples/jsm/loaders/DRACOLoader.js';
+import { GLTFLoader } from '../three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from '../three/examples/jsm/loaders/DRACOLoader.js';
 
 import { update as update_motion } from './motion.js';
 
@@ -106,15 +106,15 @@ function init() {
 
     // Car
 
-    var shadow = new THREE.TextureLoader().load( '/js/three/examples/models/gltf/ferrari_ao.png' );
+    var shadow = new THREE.TextureLoader().load( '../three/examples/models/gltf/ferrari_ao.png' );
 
     var dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath( '/js/three/examples/js/libs/draco/gltf/' );
+    dracoLoader.setDecoderPath( '../three/examples/js/libs/draco/gltf/' );
 
     var loader = new GLTFLoader();
     loader.setDRACOLoader( dracoLoader );
 
-    loader.load( '/js/three/examples/models/gltf/ferrari.glb', function ( gltf ) {
+    loader.load( '../three/examples/models/gltf/ferrari.glb', function ( gltf ) {
 
         var carModel = gltf.scene.children[ 0 ];
         carWhole = carModel;

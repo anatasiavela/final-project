@@ -1,4 +1,4 @@
-import * as THREE from '/js/three/build/three.module.js';
+import * as THREE from '../three/build/three.module.js';
 
 import {wheels, grid, chassis, brakeMaterial, carWhole} from './main.js';
 import {buttonsStatus, newPress, cacheStatus } from './gamepad.js';
