@@ -121,8 +121,8 @@ function init() {
 
         carModel.getObjectByName('brakes').material = brakeMaterial;
 
-        chassis = carModel.getObjectByName( 'body' );
-        chassis.material = bodyMaterial;
+        chassis = carModel.getObjectByName( 'main' );
+        carModel.getObjectByName( 'body' ).material = bodyMaterial;
 
         carModel.getObjectByName( 'rim_fl' ).material = rimsMaterial;
         carModel.getObjectByName( 'rim_fr' ).material = rimsMaterial;

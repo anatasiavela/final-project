@@ -173,12 +173,14 @@ function engine(dt) {
         }
     }
 
-    /* if (chassis) {
-        lat_momentum = sigma/(2* Math.PI) * v.length();
+    if (chassis) {
+        lat_momentum = sigma * v.length();
         lon_momentum = zTween(lon_momentum, a / dt, dt * 6);
-        chassis.rotation.x = lat_momentum * 0.0002;
-        chassis.rotation.y = lon_momentum * 0.0002;
-    } */
+        console.log("lat " + lat_momentum);
+        console.log("lon " + lon_momentum);
+        chassis.rotation.y = -lat_momentum * 0.0015;
+        chassis.rotation.x = lon_momentum * 0.00002 - (0.5 * Math.PI);
+    } 
 }
 
 function zTween(_val, _target, _ratio) {
