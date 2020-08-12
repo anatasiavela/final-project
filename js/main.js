@@ -106,15 +106,15 @@ function init() {
 
     // Car
 
-    var shadow = new THREE.TextureLoader().load( '../three/examples/models/gltf/ferrari_ao.png' );
+    var shadow = new THREE.TextureLoader().load( './three/examples/models/gltf/ferrari_ao.png' );
 
     var dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath( '../three/examples/js/libs/draco/gltf/' );
+    dracoLoader.setDecoderPath( './three/examples/js/libs/draco/gltf/' );
 
     var loader = new GLTFLoader();
     loader.setDRACOLoader( dracoLoader );
 
-    loader.load( '../three/examples/models/gltf/ferrari.glb', function ( gltf ) {
+    loader.load( './three/examples/models/gltf/ferrari.glb', function ( gltf ) {
 
         var carModel = gltf.scene.children[ 0 ];
         carWhole = carModel;
