@@ -1,7 +1,8 @@
-import * as THREE from './three/build/three.module.js';
+import * as THREE from '/js/three/build/three.module.js';
+
 import {wheels, grid, chassis, brakeMaterial, carWhole} from './main.js';
-import info from './info_ferrari_458.js';
 import {buttonsStatus, newPress, cacheStatus } from './gamepad.js';
+import info from './info_ferrari_458.js';
 
 //constants
 let g = 9.8;
