@@ -4,7 +4,7 @@
   "description": "CS184 final project",
   "main": "index.js",
   "dependencies": {
-    "three": "^0.118.3"
+    "three": "file:three"
   },
   "devDependencies": {},
   "scripts": {
@@ -16,7 +16,6 @@
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-  },
+  "bugs": {},
   "homepage": ""
 }
