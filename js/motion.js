@@ -51,11 +51,27 @@ var go = 0;
 var start_time = 0;
 var time_since_start = 0;
 
+function round(_val, _decimals) {
+    var nearest = Math.pow(10, _decimals);
+    return (Math.round((_val + Number.EPSILON) * nearest) / nearest).toFixed(_decimals);
+}
+
+function zTween(_val, _target, _ratio) {
+    return _val + (_target - _val) * Math.min(_ratio, 1.0);
+}
+
 var calculate_torque_engine = d3.scale.linear()
     .domain(RPM2Torque.map(function(p){return p[0];}))
     .range(RPM2Torque.map(function(p){return p[1];}));
 
-function engine(dt) {
+function run_engine(dt) {
+    var rpm = v.length() * FD_ratio * gear_ratios[curr_gear] * 60 / (2 * Math.PI * r_wheel);
+    curr_rpm = Math.max(idling_rpm, Math.min(redline_rpm, rpm));
+
+    if (automatic)
+        automaticTransmission();
+
+    // cornering force
     var alpha_f = Math.atan((v.y + Math.abs(w) * b) / v.x) - sigma * Math.sign(v.x);
     var alpha_r = Math.atan((v.y - Math.abs(w) * c) / v.x);
 
@@ -64,12 +80,6 @@ function engine(dt) {
 
     var F_lat_f = Ca * alpha_f * load_f / mass;
     var F_lat_r = Ca * alpha_r * load_r / mass;
-
-    var rpm = v.length() * FD_ratio * gear_ratios[curr_gear] * 60 / (2 * Math.PI * r_wheel);
-    curr_rpm = Math.max(idling_rpm, Math.min(redline_rpm, rpm));
-
-    if (automatic)
-        automaticTransmission();
 
     // traction force
     var F_traction;
@@ -106,9 +116,6 @@ function engine(dt) {
     // sum forces to compute acceleration
     var F_x = F_traction + F_lat_f * Math.sin(sigma) + F_resistance_x;
     var F_z = F_lat_r + F_lat_f * Math.cos(sigma) + F_resistance_z;
-    //console.log("sigma " + sigma);
-    /* console.log("v.y " + v.y);
-    console.log("F_z " + F_z);  */
     
     var a_x = F_x / mass;
     var a_z = F_z / mass;
@@ -129,7 +136,6 @@ function engine(dt) {
         v.sub(dv);
     }
 
-    //console.log(v);
     var dp = new THREE.Vector2(dt * v.x, dt * v.y);
     p.add(dp);
 
@@ -143,9 +149,9 @@ function engine(dt) {
     // update angular values
     w += dt * a_ang;
     d += dt * w;
-    //console.log(w);
+}
 
-
+function update_mesh(dt) {
     var dir = curr_gear == 0? -1 : 1;
     var rot_speed = dir * v.length() / r_wheel;
 
@@ -176,15 +182,9 @@ function engine(dt) {
     if (chassis) {
         lat_momentum = sigma * v.length();
         lon_momentum = zTween(lon_momentum, a / dt, dt * 6);
-        console.log("lat " + lat_momentum);
-        console.log("lon " + lon_momentum);
         chassis.rotation.y = -lat_momentum * 0.0015;
         chassis.rotation.x = lon_momentum * 0.00002 - (0.5 * Math.PI);
     } 
-}
-
-function zTween(_val, _target, _ratio) {
-    return _val + (_target - _val) * Math.min(_ratio, 1.0);
 }
 
 function automaticTransmission() {
@@ -220,7 +220,6 @@ function readJoystickInput() {
             case 1:     // upshift
                 if ( buttonsStatus[1] && newPress(1) && curr_gear < 7) {
                     curr_gear++;
-                    console.log("upshift at "+ curr_rpm);
                     automatic = false;
                 }
                 break;
@@ -252,7 +251,7 @@ function readJoystickInput() {
                 }
                 break;
             case 17:     // wheel turn
-                sigma = Math.round(-buttonsStatus[17]/4 * 30) / 30;
+                sigma = round(-buttonsStatus[17]/10, 2);
         }
     }
 
@@ -262,26 +261,27 @@ function readJoystickInput() {
 function update(t, last_t){
     var time_delta = t - last_t;
 
-    if (curr_gear != PARK)
-        engine(time_delta);
+    if (curr_gear != PARK) {
+        run_engine(time_delta);
+        update_mesh(time_delta);
+    }
     readJoystickInput();
 
     if (go)
         time_since_start = (performance.now() - start_time) / 1000;
 
-    var speed = Math.round((Math.abs(v.length() * 2.23694) + Number.EPSILON) * 10) / 10;
+    var speed = round(Math.abs(v.length() * 2.23694), 1);
     /* if (speed % 10 == 0)
         console.log("0 to " + speed + ": " + time_since_start); */
 
-    document.getElementById('a').innerHTML = Math.round((a + Number.EPSILON) * 10) / 10;
+    document.getElementById('a').innerHTML = round(a, 1);
     document.getElementById('v').innerHTML = speed;
     var gear = curr_gear == PARK? 'P' : curr_gear == 0? 'R' : curr_gear;
     document.getElementById('curr-gear').innerHTML = gear;
     document.getElementById('curr-rpm').style.color = curr_rpm > redline_rpm ? "red" : "black";
-    document.getElementById('curr-rpm').innerHTML = Math.round(curr_rpm);
-    document.getElementById('time').innerHTML = Math.round((time_since_start + Number.EPSILON)* 10) / 10;
-    var transmission = automatic? "automatic" : "manual";
-    document.getElementById('transmission').innerHTML = transmission;
+    document.getElementById('curr-rpm').innerHTML = round(curr_rpm, 0);
+    document.getElementById('time').innerHTML = round(time_since_start, 1);
+    document.getElementById('transmission').innerHTML = automatic? "automatic" : "manual";
 }
 
 export{update};
