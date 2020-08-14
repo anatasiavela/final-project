@@ -14,8 +14,7 @@ var camera, fakeCamera, scene, renderer;
 var stats;
 
 var grid, wheels = [];
-var chassis;
-var carWhole;
+var chassis, carWhole, steeringWheel;
 var brakeMaterial;
 
 var controls;
@@ -65,23 +64,31 @@ function init() {
     // materials
 
     var bodyMaterial = new THREE.MeshPhysicalMaterial( {
-        color: 0xff0000, metalness: 0.6, roughness: 0.4, clearcoat: 0.05, clearcoatRoughness: 0.05
+        color: 0x9B0507, metalness: 0.6, roughness: 0.4, clearcoat: 0.05, clearcoatRoughness: 0.05
     } );
 
     var rimsMaterial = new THREE.MeshStandardMaterial( {
-        color: 0xffffff, metalness: 1.0, roughness: 0.5
+        color: 0x808080, metalness: 1.0, roughness: 0.5
     } );
 
-    var stitchingMaterial = new THREE.MeshStandardMaterial( {
-        color: 0xffffff, metalness: 1.0, roughness: 0.5
+    var trimMaterial = new THREE.MeshStandardMaterial( {
+        color: 0x3D1818, metalness: 1.0, roughness: 0.5
     } );
 
-    brakeMaterial = new THREE.MeshPhysicalMaterial( {
-        color: 0xff0000, roughness: 0.6, transparent:true
+    var carpetMaterial = new THREE.MeshStandardMaterial( {
+        color: 0xCCCCCC, metalness: 0.2, roughness: 0.8
+    } );
+
+    var leatherMaterial = new THREE.MeshStandardMaterial( {
+        color: 0x28282B, metalness: 0.2, roughness: 0.8
     } );
 
     var glassMaterial = new THREE.MeshPhysicalMaterial( {
-        color: 0xffffff, metalness: 0, roughness: 0.1, transmission: 0.9, transparent: true
+        color: 0x808080, metalness: 0, roughness: 0.1, transmission: 0.9, transparent: true
+    } );
+    
+    brakeMaterial = new THREE.MeshPhysicalMaterial( {
+        color: 0xff0000, roughness: 0.6, transparent:true
     } );
 
     var bodyColorInput = document.getElementById( 'body-color' );
@@ -94,9 +101,19 @@ function init() {
         rimsMaterial.color.set( this.value );
     } );
 
-    var stitchingColorInput = document.getElementById( 'stitching-color' );
-    stitchingColorInput.addEventListener( 'input', function () {
-        stitchingMaterial.color.set( this.value );
+    var trimColorInput = document.getElementById( 'trim-color' );
+    trimColorInput.addEventListener( 'input', function () {
+        trimMaterial.color.set( this.value );
+    } );
+
+    var carpetColorInput = document.getElementById( 'carpet-color' );
+    carpetColorInput.addEventListener( 'input', function () {
+        carpetMaterial.color.set( this.value );
+    } );
+
+    var leatherColorInput = document.getElementById( 'leather-color' );
+    leatherColorInput.addEventListener( 'input', function () {
+        leatherMaterial.color.set( this.value );
     } );
 
     var glassColorInput = document.getElementById( 'glass-color' );
@@ -122,6 +139,8 @@ function init() {
         carModel.getObjectByName('brakes').material = brakeMaterial;
 
         chassis = carModel.getObjectByName( 'main' );
+        steeringWheel = carModel.getObjectByName( 'steering_wheel' );
+
         carModel.getObjectByName( 'body' ).material = bodyMaterial;
 
         carModel.getObjectByName( 'rim_fl' ).material = rimsMaterial;
@@ -129,8 +148,9 @@ function init() {
         carModel.getObjectByName( 'rim_rr' ).material = rimsMaterial;
         carModel.getObjectByName( 'rim_rl' ).material = rimsMaterial;
 
-        carModel.getObjectByName( 'trim' ).material = stitchingMaterial;
-
+        carModel.getObjectByName( 'trim' ).material = trimMaterial;
+        carModel.getObjectByName( 'carpet' ).material = carpetMaterial;
+        carModel.getObjectByName( 'leather' ).material = leatherMaterial;
         carModel.getObjectByName( 'glass' ).material = glassMaterial;
 
         wheels.push(
@@ -177,4 +197,4 @@ function render() {
 
 init();
 
-export {wheels, grid, chassis, brakeMaterial, carWhole};
+export {wheels, grid, chassis, brakeMaterial, carWhole, steeringWheel};

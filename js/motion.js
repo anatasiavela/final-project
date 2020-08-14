@@ -1,6 +1,6 @@
 import * as THREE from '../three/build/three.module.js';
 
-import {wheels, grid, chassis, brakeMaterial, carWhole} from './main.js';
+import {wheels, grid, chassis, brakeMaterial, carWhole, steeringWheel} from './main.js';
 import {buttonsStatus, newPress, cacheStatus } from './gamepad.js';
 import info from './info_ferrari_458.js';
 
@@ -28,7 +28,7 @@ let wheelbase = info["wheelbase"];
 let c = mass_dist[0] * wheelbase;                   // distance from CG to rear axle
 let b = mass_dist[1] * wheelbase;                   // distance from CG to front axle
 let Ca = 1;                                         // cornering stiffness
-let Crr = 1;                                      // rolling resistance constant
+let Crr = 10;                                      // rolling resistance constant
 let Cdrag = 0.5 * 0.33 * 1.95 * 1.29;               //drag coefficient * frontal area * density of air
 let Cf = 1;                                         // coefficient of friction
 
@@ -158,8 +158,12 @@ function update_mesh(dt) {
     for ( var i = 0; i < wheels.length; i ++ ) {
         wheels[ i ].rotation.order = 'YZX';
         if (i == 0 || i == 1)
-            wheels[ i ].rotation.y = sigma;         // only turn front wheels
+            wheels[ i ].rotation.y = sigma * (Math.PI);         // only turn front wheels
         wheels[ i ].rotation.x += -dt*rot_speed/(2*Math.PI);
+    }
+
+    if (steeringWheel) {
+        steeringWheel.rotation.y = -sigma * (2* Math.PI);
     }
 
     if (carWhole) {
