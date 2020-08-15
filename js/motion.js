@@ -28,8 +28,8 @@ let wheelbase = info["wheelbase"];
 let c = mass_dist[0] * wheelbase;                   // distance from CG to rear axle
 let b = mass_dist[1] * wheelbase;                   // distance from CG to front axle
 let Ca = 1;                                         // cornering stiffness
-let Crr = 10;                                      // rolling resistance constant
-let Cdrag = 0.5 * 0.33 * 1.95 * 1.29;               //drag coefficient * frontal area * density of air
+let Cdrag = 0.5 * 0.33 * 1.95 * 1.29;               // drag coefficient * frontal area * density of air
+let Crr = 30 * Cdrag;                               // rolling resistance constant
 let Cf = 1;                                         // coefficient of friction
 
 // curr specs

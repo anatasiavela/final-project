@@ -33,7 +33,7 @@ a, button, input, select {
     -ms-user-select: none;
     user-select: none;
     pointer-events: none;
-    z-index: 2; /* TODO Solve this in HTML */
+    z-index: 3; /* TODO Solve this in HTML */
 }
 
 #stats {
